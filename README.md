@@ -1,2 +1,2 @@
 # archuser.org
-My website’s code
+My website's document root

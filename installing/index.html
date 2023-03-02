@@ -1,0 +1,266 @@
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BRFER2QEH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6BRFER2QEH');
+</script>
+
+<!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//archuser.org/matomo/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+
+<meta name="viewport" content="width=device-width">
+<title>archuser.org</title>
+<meta name="description" content="archuser.org" />
+<link rel="stylesheet" href="/index.css">
+<h2><span style="color:LimeGreen">How to install Arch Linux</span></h2>
+
+<p>
+NOTE: This guide assumes you have a wired ethernet connection as well as use the default keyboard layout
+</p>
+<p>
+TIP: Install a cli web browser to access this guide, or <a href="https://wiki.archlinux.org/">wiki.archlinux.org</a> at any time during the install if you don't have a second computer, or a mobile device with you.
+</p>
+<p>
+First thing that you should do is partition your target drive.<br>
+For the purposes of this tutorial, I will assume the drive is <em>/dev/sda</em><br>
+Yours could be diffrent though, so if you have multiple drives in your system, run <em>lsblk</em> and mount the drives to check the contents<br>
+<br>
+
+running this command will bring up a GUI-like system to partition your drive:<br>
+<pre>
+  <code>
+  cfdisk /dev/sda
+  </code>
+</pre>
+</p>
+<p>
+From this create these partitions:
+
+<pre>
+  <code>
+   EFI System partition: at least 300MB (ONLY IF USING UEFI SYSTEM)
+   SWAP partition: More than 512MB
+   Root partition: Remainder of the drive
+  </code>
+</pre>
+
+You can put as much as you want in the SWAP partition, I would suggest you put 8GB in it.<br>
+</p>
+
+<p>
+Now you must format and mount the partitions.<br>
+
+<pre>
+  <code>
+   mkfs.ext4 /dev/sda3
+   mkswap /dev/sda2
+   mkfs.fat -F 32 /dev/sda1
+  </code>
+</pre>
+
+Make sure the end of the command lines up with the correct partition.<br>
+<br>
+Now we mount the partitions:<br>
+<pre>
+  <code>
+   cd /mnt
+   mount /dev/sda3 /mnt
+   mount --mkdir /dev/sda1 /mnt/boot
+   swapon /dev/sda2
+  </code>
+</pre>
+
+</p>
+
+<!--
+<pre>
+  <code>
+   R
+  </code>
+</pre>
+ -->
+
+<p>
+Install the base system:<br>
+<pre>
+  <code>
+   pacstrap -K /mnt base linux linux-firmware           
+  </code>
+</pre>
+TIP: You can substitute linux for a kernel package of your choice, popular kernels include: hardened, longterm, realtime kernel, and zen kernel. See the <a href="https://wiki.archlinux.org/title/Kernel">kernel</a> of the archwiki for more info.
+</p>
+<p>
+Next you need to generate the fstab. We use <em>-U</em> to generate by UUID to ensure the right disk, and partitions are used.
+<pre>
+ <code>
+  genfstab -U /mnt >> /mnt/etc/fstab
+ </code>
+</pre>
+Check the resulting <em>/mnt/etc/fstab</em> file, and edit it in case of errors.<br>
+</p>
+<p>
+
+Next we need to chroot into the system in order to make vital changes, install a bootloader, and make finalizing changes to make your system work.
+<pre>
+ <code>
+arch-chroot /mnt
+ </code>
+</pre>
+
+Set your timezone
+
+<pre>
+ <code>
+  ln -sf /usr/share/zoneinfo/<em>Region/City</em> /etc/localtime
+ </code>
+</pre>
+
+Run hwclock to generate <em>/etc/adjtime</em>
+
+<pre>
+ <code>
+  hwclock --systohc
+ </code>
+</pre> 
+
+NOTE: This command assumes you have a motherboard clock set to UTC. Set it to UTC time or run <em>timedatectl set-local-rtc 1</em> to use localtime.<br>
+<br>
+Edit <em>/etc/locale.gen</em> and uncomment (remove the <em>#</em>) <em>en_US.UTF-8 UTF-8</em> and other needed locales. Generate the locales by running
+
+<pre>
+ <code>
+  locale-gen
+ </code>
+</pre>
+</p>
+<p>
+Create the /etc/locale.conf file, and set the LANG variable accordingly
+
+<pre>
+ <code>
+  LANG=en_US.UTF-8
+ </code>
+</pre>
+
+Create the hostname file at /etc/hostname
+<pre>
+ <code>
+  <em>your_hostname</em>
+ </code>
+</pre>
+
+Next add the following to the <em>/etc/hosts</em>
+
+<pre>
+ <code>
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	<em>your_hostname</em>
+ </code>
+</pre>
+
+Enable DHCP to connect to your router later
+<pre>
+ <code>
+ pacman -S dhcpcd
+ systemctl enable dhcpcd
+ </code>
+</pre>
+
+Set the ROOT password
+<pre>
+ <code>
+  passwd
+ </code>
+</pre>
+
+Install the GRUB Bootloader package (non-UEFI system ONLY)
+<pre>
+ <code>
+  pacman -S grub os-prober
+ </code>
+</pre>
+
+Install GRUB to your disk, USE YOUR BOOT PARTITION
+
+<pre>
+ <code>
+ grub-install /dev/sda
+ </code>
+</pre>
+
+Make the GRUB config file
+<pre>
+ <code>
+ mkdir /boot/grub
+ grub-mkconfig -o /boot/grub/grub.cfg
+ </code>
+</pre>
+
+Install the GRUB Bootloader package (UEFI system ONLY)
+<pre>
+ <code>
+  pacman -S grub efibootmgr
+ </code>
+</pre>
+
+Create the directory for your EFI partition
+<pre>
+ <code>
+  mkdir /boot/efi
+ </code>
+</pre>
+
+Mount the EFI partition
+<pre>
+ <code>
+  mount /dev/sda1 /boot/efi
+ </code>
+</pre>
+
+Install GRUB by running this command
+<pre>
+ <code>
+  grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
+ </code>
+</pre>
+
+Make the GRUB configuration file
+<pre>
+ <code>
+   grub-mkconfig -o /boot/grub/grub.cfg
+ </code>
+</pre>
+
+Finally you can exit the system
+<pre>
+ <code>
+  exit
+ </code>
+</pre>
+<pre>
+<code>
+sudo reboot
+</code>
+</pre>
+
+</p>
+
+

@@ -1,0 +1,66 @@
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BRFER2QEH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6BRFER2QEH');
+</script>
+
+<!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//archuser.org/matomo/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="/index.css">
+<h2><span style="color:LimeGreen">Flashing your install USB</span></h2>
+<p>
+Installation of Arch Linux requires a usb stick of at least 2GB in size or a DVD-R. Most people will prefer a USB drive as it is faster.<br>
+I would reccomend a USB 3.0 flash drive if your computer that supports USB 3.0. A computer that does has blue USB ports.
+</p>
+
+<p>
+There are two methods I reccomend:<br>
+<a href="https://rufus.ie">Rufus</a> (Reccomended)<br>
+<a href="https://etcher.io">Etcher</a>(Lacks built in SHA256 check, contains analytics, and first-party advertising)<br>
+</p>
+
+<p>
+Flash using Rufus:<br>
+1. Download Arch Linux from archlinux.org<br>
+2. Insert USB into computer<br>
+3. Install Rufus from <a href="https://rufus.ie">rufus.ie</a><br>
+4. Select USB drive from top dropdown menu<br>
+5. Select .iso image by clicking "Select"<br>
+6. Click the checkmark betton and compare the SHA256 signature Rufus shows you with the one found <a href="https://archlinux.org/download/#checksums"=>here</a><br>
+7. Click "Start" to begin flashing<br>
+8. When prompted, remove USB drive, shutdown your computer, reinsert USB drive, and boot into the Arch Linux live USB<br>
+
+Note: Disable secure boot in BIOS and set the drive to the top of the boot order before booting USB drive
+</p>
+
+<p>
+Flash using Etcher:<br>
+1. Download Arch Linux from archlinux.org<br> 
+2. Use a a program such as 7zip to check the SHA256 (7zip method found <a href="https://www.cmsimple-xh.org/?Downloads/Checksums">here</a>)<br>
+3. Install Etcher from <a href="https://etcher.io">etcher.io</a> or cmd with `winget install balena.etcher`<br>
+4. Insert USB drive<br>
+5. Select the .iso image by clicking "Flash from file"<br>
+6. Select USB drive by clicking "Select target"<br>
+7. Click "Flash" to begin flashing drive.
+8. When instructed, remove USB drive, shutdown your computer, reinsert USB drive, and boot into the Arch Linux live USB.
+Note: Disable secure boot in BIOS and set the drive to the top of the boot order before booting USB drive
+</p>
